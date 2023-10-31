@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> QuestionLESS </title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+</head>
+
+<!-- 引入组件库 -->
+<script src="/static/layui/layui.js"></script>
+<body class="layui-bg-gray">
+
+
+<div class="layui-bg-gray" style="padding: 16px;">
+    <div class="layui-card">
+
+
+        <div class="layui-card-header layui-text">
+            <h2>QuestionLESS</h2>
+        </div>
+
+        <div class="layui-card-body layui-text" id="top-panel">
+            <p> 一款基于 Go Selenium 的自动测试软件, 可分析问卷星等问卷网站并自动填写</p>
+
+            <form class="layui-form layui-form-pane" action="">
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">作者 </label>
+                    <div class="layui-input-inline layui-input-wrap">
+                        <input class="layui-input" value="Way1and" disabled/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类型</label>
+
+                    <div class="layui-input-inline layui-input-wrap">
+                        <select id="select-type">
+                            <option value="">请选择或搜索</option>
+                            <option value="1">问卷星</option>
+                        </select>
+                    </div>
+
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网址 </label>
+                    <div class="layui-input-inline layui-input-wrap">
+                        <input class="layui-input" id="url-input"/>
+                    </div>
+
+
+                    <button type="button" id="btn-scan" class="layui-btn layui-btn-primary layui-bg-blue">扫描问卷</button>
+
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label"> 数量 </label>
+                    <div class="layui-input-inline layui-input-wrap">
+                        <input class="layui-input" value="请先扫描问卷" id="num-input" disabled/>
+                    </div>
+                    <button type="button" id="btn-submit" class="layui-btn layui-btn-primary">一键填写</button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="form-list" class="layui-bg-gray" style="padding: 16px;">
+
+
+</div>
+
+</body>
+<script src="/static/index.js"></script>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+    document.getElementById("btn-scan").onclick = ClickScanUrl
+    document.getElementById("btn-submit").onclick = ClickSubmitForm
+    layui.use(function () {
+        const layer = layui.layer;
+        // Welcome
+        layer.msg('[QuestionLESS]: 欢迎使用');
+    });
+
+</script>
+
+</html>
