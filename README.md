@@ -12,6 +12,15 @@
 2. 命名为chromedriver.exe, 替换项目下chromedriver
 3. go run main.go
 
+### 运行参数
+|  参数   |  默认值 | 描述 |
+|  ----  | ----  |  ---- |
+| -ip | localhost | gin服务器运行IP地址 |
+| -port | 80 | gin服务器运行port |
+| -dport | 81 | ChromeDriver服务端口 |
+
+例: go run main.go -port=80 -dport=81
+  
 ### 演示
 ![image](./face.png)
 
