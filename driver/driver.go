@@ -4,19 +4,58 @@ import (
 	"fmt"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
+	"net"
+	"strconv"
 	"time"
 )
 
-var PORT = 0
+var PORTUsingMap = make(map[int]bool) // false 空闲
 
-func Driver(url string) (*selenium.Service, *selenium.WebDriver) {
+func UsePORT(port int) {
+	PORTUsingMap[port] = true
+}
+
+func GetPORT() int {
+	for port, using := range PORTUsingMap {
+		if !using {
+			UsePORT(port)
+			return port
+		}
+	}
+	return 0
+}
+
+func CheckPort(port int) bool {
+	// true 可用
+	// false 不可用
+	l, err := net.Listen("tcp", fmt.Sprintf(":%s", strconv.Itoa(port)))
+	if err != nil {
+		return false
+	}
+	defer func(l net.Listener) {
+		_ = l.Close()
+	}(l)
+	return true
+}
+
+func FreePORT(port int) {
+	PORTUsingMap[port] = false
+}
+
+func AddPORT(port int) {
+	PORTUsingMap[port] = false
+}
+
+func Driver(url string) (*selenium.Service, *selenium.WebDriver, int) {
 
 	var opts []selenium.ServiceOption
 	var page *selenium.Service
 	var err error
+	var PORT int
 	for {
+		PORT = GetPORT()
 		page, err = selenium.NewChromeDriverService("./chromedriver.exe", PORT, opts...)
-		if err != nil {
+		if err != nil || PORT == 0 {
 			fmt.Println("网络问题正在重启")
 			duration, _ := time.ParseDuration("5s")
 			time.Sleep(duration)
@@ -44,13 +83,13 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver) {
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("测试")
-		return nil, nil
+		return nil, nil, 0
 	}
 	//
 
 	if err := wd.Get(url); err != nil {
 		fmt.Println(err)
-		return nil, nil
+		return nil, nil, 0
 	}
 
 	for {
@@ -63,5 +102,5 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver) {
 		break
 	}
 
-	return page, &wd
+	return page, &wd, PORT
 }

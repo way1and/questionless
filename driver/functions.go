@@ -202,10 +202,11 @@ func (o *Operator) QuestionRequire(index int) bool {
 }
 
 func (p *Page) GetStructure() []models.Question {
-	chrome, page := Driver(p.Url)
+	chrome, page, port := Driver(p.Url)
 	operator := Operator{driver: page}
 	defer func(chrome *selenium.Service) {
 		_ = chrome.Stop()
+		FreePORT(port)
 	}(chrome)
 	defer func(driver selenium.WebDriver) {
 		_ = driver.Close()
@@ -229,12 +230,13 @@ func (p *Page) GetStructure() []models.Question {
 }
 
 func (p *Page) Submit(data []any) bool {
-	chrome, page := Driver(p.Url)
+	chrome, page, port := Driver(p.Url)
 
 	operator := Operator{driver: page}
 
 	defer func(chrome *selenium.Service) {
 		_ = chrome.Stop()
+		FreePORT(port)
 	}(chrome)
 	defer func(driver selenium.WebDriver) {
 		_ = driver.Close()
