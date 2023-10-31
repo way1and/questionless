@@ -2,15 +2,25 @@ package main
 
 import (
 	"filler/controller"
+	"filler/driver"
 	"flag"
+	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+
+	var port int
+	var ip string
+	var driverPort int
+	flag.IntVar(&port, "port", 80, "指定端口号, 端口号应为数字")
+	flag.StringVar(&ip, "ip", "localhost", "指定IP 以-间隔")
+	flag.IntVar(&driverPort, "dport", 81, "指定端口号")
+	driver.PORT = driverPort
+	flag.Parse()
+
 	server := gin.Default()
-	var port = flag.String("port", "80", "指定IP")
-	var ip = flag.String("ip", "localhost", "指定IP")
 
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
@@ -28,7 +38,7 @@ func main() {
 	server.POST("/submit", controller.Submit)
 	server.POST("/close", controller.Close)
 
-	err := server.Run(*ip + ":" + *port)
+	err := server.Run(fmt.Sprintf("%s:%d", ip, port))
 	if err != nil {
 		return
 	}

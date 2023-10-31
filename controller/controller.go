@@ -4,7 +4,6 @@ import (
 	"filler/driver"
 	"filler/models"
 	"filler/tasks"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 	"net/http"
@@ -24,7 +23,6 @@ func Submit(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "提交数据格式有误"})
 		return
 	}
-
 	t := tasks.Start(data)
 	c.JSON(http.StatusOK, gin.H{"msg": "启动成功", "data": t, "secret": t.Secret})
 	return
@@ -60,7 +58,6 @@ func Close(c *gin.Context) {
 }
 
 func Status(c *gin.Context) {
-	fmt.Println(c.Query("task_id"))
 	taskID := cast.ToInt64(c.Query("task_id"))
 	secret := c.Query("task_secret")
 	task, exist := tasks.GetTask(taskID, secret)

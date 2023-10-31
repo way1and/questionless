@@ -323,18 +323,18 @@ func Exec(task *models.Task, data []any) {
 	startNum := task.Info.CurrentNum
 	for r := startNum; r < rNum; r++ {
 		// 检测有没有终止
-		if task.Running {
-			fmt.Println("第", r, "轮提交")
+		if task.Info.Running {
+			fmt.Println("[", task.ID, "]", "第", r+1, "次提交...")
 			task.Info.CurrentNum = r + 1
 			if NewPage(task.Info.Url).Submit(data) {
-				fmt.Println("第", r, "次提交成功")
+				fmt.Println("[", task.ID, "]", "第", r+1, " 次提交成功")
 				task.Info.SuccessCount += 1
 			} else {
 				task.Info.FailedCount += 1
-				if task.Info.FailedCount >= 1 {
+				if task.Info.FailedCount >= 5 {
 					// 超过 5次 自动终止
-					fmt.Println("提交失败次数过多 自动终止")
-					task.Running = false
+					fmt.Println("[", task.ID, "]", "提交失败次数过多 自动终止")
+					task.Info.Running = false
 				}
 			}
 		} else {

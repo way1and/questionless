@@ -4,7 +4,6 @@ import (
 	"filler/driver"
 	"filler/models"
 	"filler/utils"
-	"fmt"
 	"time"
 )
 
@@ -13,7 +12,6 @@ var Tasks = make(map[int64]*models.Task)
 func Start(data models.SubmitData) *models.Task {
 	task := new(models.Task)
 	task.ID = time.Now().Unix()
-	task.Running = true
 	task.Secret = utils.RandomString(32)
 
 	Tasks[task.ID] = task
@@ -24,6 +22,7 @@ func Start(data models.SubmitData) *models.Task {
 		CurrentNum:   0,
 		SuccessCount: 0,
 		FailedCount:  0,
+		Running:      true,
 	}
 	go driver.Exec(task, data.Data)
 
@@ -31,12 +30,10 @@ func Start(data models.SubmitData) *models.Task {
 }
 
 func GetTask(id int64, secret string) (*models.Task, bool) {
-	fmt.Println("Get INFO 任务", id, "密钥", secret)
 	task := Tasks[id]
 	if task == nil {
 		return nil, false
 	}
-
 	if task.Secret == secret {
 		return task, true
 	} else {

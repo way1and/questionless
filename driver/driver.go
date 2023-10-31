@@ -1,26 +1,21 @@
 package driver
 
 import (
-	"flag"
 	"fmt"
-	"github.com/spf13/cast"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 	"time"
 )
 
-var driverPort = 0
+var PORT = 0
 
 func Driver(url string) (*selenium.Service, *selenium.WebDriver) {
-	if driverPort == 0 {
-		driverPort = cast.ToInt(flag.String("driver_port", "81", "指定IP"))
-	}
 
 	var opts []selenium.ServiceOption
 	var page *selenium.Service
 	var err error
 	for {
-		page, err = selenium.NewChromeDriverService("./chromedriver.exe", driverPort, opts...)
+		page, err = selenium.NewChromeDriverService("./chromedriver.exe", PORT, opts...)
 		if err != nil {
 			fmt.Println("网络问题正在重启")
 			duration, _ := time.ParseDuration("5s")
@@ -45,7 +40,7 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver) {
 	}
 	caps.AddChrome(chromeCaps)
 	//
-	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", driverPort))
+	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", PORT))
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("测试")

@@ -7,4 +7,5 @@ type TaskInfo struct {
 	CurrentNum   int    `json:"current_num,omitempty"`
 	SuccessCount int    `json:"success_count,omitempty"`
 	FailedCount  int    `json:"failed_count,omitempty"`
+	Running      bool   `json:"running,omitempty"`
 }

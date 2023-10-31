@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/spf13/cast"
 	"math/rand"
 )
@@ -30,20 +29,15 @@ func RateChoose(rateArr []float64) int {
 
 func RateSample(rateArr []float64, notBlank bool) []int {
 	var samples []int
-	fmt.Println(rateArr)
-
 	for idx, rate := range rateArr {
 		selected := RateChoose([]float64{100.0 - rate, rate})
 		if selected == 1 { // 选中
-			fmt.Println(idx)
 			samples = append(samples, idx)
 		}
 	}
 	// 如果必须
 	if notBlank && len(samples) == 0 {
-		fmt.Println("retry")
 		return RateSample(rateArr, true)
 	}
-	fmt.Println(samples)
 	return samples
 }
