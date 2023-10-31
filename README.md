@@ -17,7 +17,7 @@
 |  ----  | ----  |  ---- |
 | -ip | localhost | gin服务器运行IP地址 |
 | -port | 80 | gin服务器运行port |
-| -dport | 81 | ChromeDriver服务端口 |
+| -dports | 9000-9010...-9090 | ChromeDriver服务端口 |
 
 例: go run main.go -port=80 -dport=81
   
