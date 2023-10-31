@@ -299,7 +299,8 @@ function ClickConfigShow(index){
         for (let optionIdx in item.options) {
             let option = item.options[optionIdx]
             //
-            if (item["type"] === "单选") {
+            if (item["type"] === "单选" || item["type"] === "多选") {
+                console.log("123")
                 let form = document.createElement("form")
                 $(form).addClass("layui-form")
 
@@ -326,7 +327,7 @@ function ClickConfigShow(index){
                 div.appendChild(form)
             }
             // 其他情况
-            else if (item["type"] === "多选") {
+            else if (item["type"] === "未知") {
 
             }
 
@@ -348,9 +349,6 @@ function ClickConfigShow(index){
         content: div.innerHTML
     });
 }
-
-
-
 
 async function chooseText(btn){
     let index = $(btn).attr("index")
