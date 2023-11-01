@@ -8,6 +8,7 @@ import (
 )
 
 var Tasks = make(map[int64]*models.Task)
+var StatusNoTask = true
 
 func Start(data models.SubmitData) *models.Task {
 	task := new(models.Task)
@@ -26,6 +27,10 @@ func Start(data models.SubmitData) *models.Task {
 	}
 	go driver.Exec(task, data.Data)
 
+	if StatusNoTask {
+		go DeleteFreeTask()
+	}
+
 	return task
 }
 
@@ -42,6 +47,21 @@ func GetTask(id int64, secret string) (*models.Task, bool) {
 	}
 }
 
-func DeleteTask(id int64) {
-	delete(Tasks, id)
+func DeleteFreeTask() {
+	// 轮询 删除任务
+	StatusNoTask = false
+	d, _ := time.ParseDuration("60s")
+	for {
+		time.Sleep(d)
+		for id, task := range Tasks {
+			if task == nil {
+				continue
+			} else if Tasks[id].Info.Running == false || Tasks[id].Finished {
+				delete(Tasks, id)
+			}
+		}
+		break
+	}
+	// 恢复无任务状态
+	StatusNoTask = true
 }

@@ -41,6 +41,7 @@ function ClickScanUrl(){
             let data
 
             if (res.data == null){
+                layer.msg(res["msg"])
                return
             }
             data = res.data
@@ -58,8 +59,8 @@ function ClickScanUrl(){
         },
         error(res){
             Scanning = false // 设置状态
-            console.log(res)
-            layer.msg(`扫描失败! 错误信息 ${res} `)
+            let msg = res["responseJSON"].msg
+            layer.msg(`扫描失败: ${msg}`)
             $(ButtonSubmit).removeClass("layui-bg-green")
             refreshFormList(null)
         }

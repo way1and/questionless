@@ -203,6 +203,10 @@ func (o *Operator) QuestionRequire(index int) bool {
 
 func (p *Page) GetStructure() []models.Question {
 	chrome, page, port := Driver(p.Url)
+	if chrome == nil || page == nil || port == 0 {
+		return nil
+	}
+
 	operator := Operator{driver: page}
 	defer func(chrome *selenium.Service) {
 		_ = chrome.Stop()

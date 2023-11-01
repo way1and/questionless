@@ -4,17 +4,52 @@ import (
 	"fmt"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
+	"github.com/tebeka/selenium/log"
 	"net"
 	"strconv"
 	"time"
 )
 
+var caps selenium.Capabilities
 var PORTUsingMap = make(map[int]bool) // false 空闲
+
+// init 配置 chrome driver 参数
+func init() {
+	caps = selenium.Capabilities{
+		"browserName": "chrome",
+	}
+	imagCaps := map[string]interface{}{
+		"profile.managed_default_content_settings.images": 2,
+	}
+	chromeCaps := chrome.Capabilities{
+		Prefs: imagCaps,
+		Args: []string{
+			"--headless",    //设置Chrome无头模式
+			"--log-level=3", // 日志等级
+			"--silent",      // 无输出
+		},
+		ExcludeSwitches: []string{
+			"enable-logging", // 关闭 dev listen on
+		},
+	}
+
+	caps.AddChrome(chromeCaps) // 设置日志等级
+	mode := log.Severe
+	caps.AddLogging(log.Capabilities{
+		log.Server:      mode,
+		log.Driver:      mode,
+		log.Browser:     mode,
+		log.Client:      mode,
+		log.Profiler:    mode,
+		log.Performance: mode,
+	})
+}
 
 func UsePORT(port int) {
 	PORTUsingMap[port] = true
 }
 
+// GetPORT 获得空闲端口
 func GetPORT() int {
 	for port, using := range PORTUsingMap {
 		if !using {
@@ -25,9 +60,9 @@ func GetPORT() int {
 	return 0
 }
 
+// CheckPort 检查端口占用 true 可用 false 不可用
 func CheckPort(port int) bool {
-	// true 可用
-	// false 不可用
+
 	l, err := net.Listen("tcp", fmt.Sprintf(":%s", strconv.Itoa(port)))
 	if err != nil {
 		return false
@@ -38,14 +73,17 @@ func CheckPort(port int) bool {
 	return true
 }
 
+// FreePORT 释放端口
 func FreePORT(port int) {
 	PORTUsingMap[port] = false
 }
 
+// AddPORT 添加新端口
 func AddPORT(port int) {
 	PORTUsingMap[port] = false
 }
 
+// Driver 获得 driver 对象
 func Driver(url string) (*selenium.Service, *selenium.WebDriver, int) {
 
 	var opts []selenium.ServiceOption
@@ -64,20 +102,7 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver, int) {
 		// 无问题
 		break
 	}
-	// 浏览器设置
-	caps := selenium.Capabilities{
-		"browserName": "chrome",
-	}
-	imagCaps := map[string]interface{}{
-		"profile.managed_default_content_settings.images": 2,
-	}
-	chromeCaps := chrome.Capabilities{
-		Prefs: imagCaps,
-		Args: []string{
-			"--headless", //设置Chrome无头模式
-		},
-	}
-	caps.AddChrome(chromeCaps)
+
 	//
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", PORT))
 	if err != nil {
@@ -91,16 +116,20 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver, int) {
 		fmt.Println(err)
 		return nil, nil, 0
 	}
-
 	for {
 		d, _ := time.ParseDuration("2s")
 		time.Sleep(d)
 		ele, err := wd.FindElement(selenium.ByXPATH, "/html/body/div[1]/form/div[13]/div[10]/div[3]/div/div/div")
 		if err != nil || ele == nil {
+			// 问卷已关闭
+			ele, err := wd.FindElement(selenium.ByID, "divWorkError")
+			if err != nil || ele != nil {
+				return nil, nil, 0
+			}
+
 			continue
 		}
 		break
 	}
-
 	return page, &wd, PORT
 }

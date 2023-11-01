@@ -12,6 +12,11 @@ import (
 func Scan(c *gin.Context) {
 	url := c.Query("url")
 	li := driver.NewPage(url).GetStructure()
+	if li == nil {
+		c.JSON(http.StatusNotFound, gin.H{"msg": "本机无法连接到问卷星或该问卷已关闭"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": li})
 	return
 }
