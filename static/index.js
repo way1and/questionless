@@ -394,7 +394,7 @@ function Check(){
             let rate;
             for (let option of item["options"]){
                 rate = parseFloat(option["rate"])
-                if (!rate){
+                if (isNaN(rate)){
                     // 有错误值
                     return [false, `问题 ${item["index"]} 选项 ${option["index"]} 的参数不是一个有效数字`]
                 }
@@ -402,7 +402,7 @@ function Check(){
             }
             if (item["required"]){
                 if (rateTotal === 0){
-                    return [false, `问题 ${item["index"]} 为必填项, 但问题选取率之和为 0`]
+                    layer.msg(`注意: 问题 ${item["index"]} 为必填项, 但问题选取率之和为 0`)
                 }
             }
         }

@@ -132,7 +132,7 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver, int) {
 	for {
 		d, _ := time.ParseDuration("2s")
 		time.Sleep(d)
-		ele, err := wd.FindElement(selenium.ByXPATH, "//*[@id='ctlNext']")
+		ele, err := wd.FindElement(selenium.ByID, "ctlNext")
 		if err != nil || ele == nil {
 			// 问卷已关闭
 			ele, err := wd.FindElement(selenium.ByID, "divWorkError")
