@@ -2,12 +2,13 @@ package driver
 
 import (
 	"fmt"
-	"github.com/tebeka/selenium"
-	"github.com/tebeka/selenium/chrome"
-	"github.com/tebeka/selenium/log"
 	"net"
 	"strconv"
 	"time"
+
+	"github.com/tebeka/selenium"
+	"github.com/tebeka/selenium/chrome"
+	"github.com/tebeka/selenium/log"
 )
 
 var caps selenium.Capabilities
@@ -116,10 +117,22 @@ func Driver(url string) (*selenium.Service, *selenium.WebDriver, int) {
 		fmt.Println(err)
 		return nil, nil, 0
 	}
+
+	script := `
+    Object.defineProperty(navigator, 'webdriver', {
+        get: () => undefined
+    });
+	`
+	_, err2 := wd.ExecuteScript(script, nil)
+	if err2 != nil {
+		fmt.Println("Failed to execute JavaScript:", err)
+		return nil, nil, 0
+	}
+
 	for {
 		d, _ := time.ParseDuration("2s")
 		time.Sleep(d)
-		ele, err := wd.FindElement(selenium.ByXPATH, "/html/body/div[1]/form/div[13]/div[10]/div[3]/div/div/div")
+		ele, err := wd.FindElement(selenium.ByXPATH, "//*[@id='ctlNext']")
 		if err != nil || ele == nil {
 			// 问卷已关闭
 			ele, err := wd.FindElement(selenium.ByID, "divWorkError")

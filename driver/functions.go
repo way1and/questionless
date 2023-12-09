@@ -4,10 +4,12 @@ import (
 	"filler/models"
 	"filler/utils"
 	"fmt"
-	"github.com/spf13/cast"
-	"github.com/tebeka/selenium"
 	"math/rand"
 	"strings"
+	"time"
+
+	"github.com/spf13/cast"
+	"github.com/tebeka/selenium"
 )
 
 type Page struct {
@@ -87,12 +89,82 @@ func (o *Operator) QuestionInput(index int, text string) bool {
 // QuestionSubmit 提交
 func (o *Operator) QuestionSubmit() bool {
 	driver := *o.driver
-	ele, _ := driver.FindElement(selenium.ByXPATH, "/html/body/div[1]/form/div[13]/div[10]/div[3]/div/div/div")
+	ele, _ := driver.FindElement(selenium.ByXPATH, "//*[@id='ctlNext']")
+	d1, _ := time.ParseDuration("1s")
+	time.Sleep(d1)
 	err := ele.Click()
+	d2, _ := time.ParseDuration("0.5s")
+	time.Sleep(d2)
+
+	tanchuang, _ := driver.FindElement(selenium.ByXPATH, "//*[@id='layui-layer1']/div[3]/a")
+	if tanchuang != nil {
+		tanchaung_err := tanchuang.Click()
+		d, _ := time.ParseDuration("2s")
+		time.Sleep(d)
+		if tanchaung_err != nil {
+			return false
+		}
+
+	}
+
+	yanzheng, _ := driver.FindElement(selenium.ByXPATH, "//*[@id='SM_BTN_1']")
+	if yanzheng != nil {
+		yanzheng_err := yanzheng.Click()
+		d, _ := time.ParseDuration("4s")
+		time.Sleep(d)
+		if yanzheng_err != nil {
+			return false
+		}
+
+	}
+
+	huakuai, _ := driver.FindElement(selenium.ByXPATH, "//*[@id='nc_1_n1z']")
+	if huakuai != nil {
+		// err = slideSlider(driver, huakuai)
+		err = slideSlider(driver, huakuai)
+		if err != nil {
+			fmt.Println("Failed to slide slider:", err)
+			return false
+		}
+		// huakuai_err := huakuai.Click()
+		// d, _ := time.ParseDuration("1s")
+		// time.Sleep(d)
+		// if huakuai_err != nil {
+		// 	return false
+		// }
+	}
 	if err != nil {
 		return false
 	}
 	return true
+}
+
+func slideSlider(wd selenium.WebDriver, sliderElement selenium.WebElement) error {
+	// 获取滑块的位置
+	location, err := sliderElement.Location()
+	if err != nil {
+		return err
+	}
+
+	wd.ButtonDown()
+	// 计算滑动目标位置（这里示意性地滑动到右侧，具体根据实际情况调整）
+	targetX := location.X + 100
+	targetY := location.Y + 50
+
+	// 模拟鼠标点击滑块并保持
+	sliderElement.MoveTo(targetX, targetY)
+
+	// 使用JavaScript执行滑动操作
+	// script := fmt.Sprintf("arguments[0].style.left='%dpx';", targetX)
+	// _, err = wd.ExecuteScript(script, []interface{}{sliderElement})
+	// if err != nil {
+	// 	return err
+	// }
+
+	// 等待一段时间以确保滑块移动完成（具体等待时间根据实际情况调整）
+	time.Sleep(2 * time.Second)
+
+	return nil
 }
 
 func (o *Operator) OptionInput(index, optionIndex int, text string) bool {
@@ -236,6 +308,7 @@ func (p *Page) GetStructure() []models.Question {
 func (p *Page) Submit(data []any) bool {
 	chrome, page, port := Driver(p.Url)
 
+	// fmt.Printf("chrome: %v, page: %v, port: %v\n", chrome, page, port)
 	operator := Operator{driver: page}
 
 	defer func(chrome *selenium.Service) {
