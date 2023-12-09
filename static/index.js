@@ -1,4 +1,3 @@
-const API = "http://localhost:80"
 const UrlInput = document.getElementById("url-input")
 const FormList = document.getElementById("form-list")
 const ButtonSubmit = document.getElementById("btn-submit")
@@ -33,7 +32,7 @@ function ClickScanUrl(){
     layer.msg("开始扫描, 请耐心等待...")
     Scanning = true
     $.ajax({
-        url:API + "/scan?url=" + url,
+        url: API + "/scan?url=" + url,
         async:true,
         method:"GET",
         success(res){

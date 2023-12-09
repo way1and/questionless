@@ -1,6 +1,7 @@
 package main
 
 import (
+	"filler/conf"
 	"filler/controller"
 	"filler/driver"
 	"flag"
@@ -37,11 +38,15 @@ func main() {
 
 	flag.Parse()
 	gin.SetMode(gin.ReleaseMode)
+
 	server := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	server.Use(cors.New(config))
 	server.Use(cors.Default())
+
+	// 修改 API
+	conf.SetAPI(ip, port)
 
 	// 静态
 	server.Static("/static", "./static")
